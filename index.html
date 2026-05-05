@@ -12,7 +12,7 @@
   </head>
   <body>
     <main id="impress" data-transition-duration="700">
-      <section class="step title-step" data-x="0" data-y="0" data-scale="1">
+      <section id="step-1" class="step title-step" data-x="0" data-y="0" data-scale="1">
         <p class="eyebrow">Pre-launch critique</p>
         <h1>This is not a launch.</h1>
         <p class="lede">
@@ -22,7 +22,7 @@
         <p class="claim open">Status: open question</p>
       </section>
 
-      <section class="step" data-x="1250" data-y="0" data-rotate="3">
+      <section id="step-2" class="step" data-x="1250" data-y="0" data-rotate="3">
         <p class="eyebrow">The problem</p>
         <h2>Communication tools do more than move messages.</h2>
         <p>
@@ -35,7 +35,7 @@
         </p>
       </section>
 
-      <section class="step" data-x="2500" data-y="180" data-rotate="-2">
+      <section id="step-3" class="step" data-x="2500" data-y="180" data-rotate="-2">
         <p class="eyebrow">The question</p>
         <h2>What if the relationship layer were user-controlled?</h2>
         <p>
@@ -46,7 +46,7 @@
         <p class="claim principle">Principle: user-held trust</p>
       </section>
 
-      <section class="step" data-x="3650" data-y="680" data-rotate="5">
+      <section id="step-4" class="step" data-x="3650" data-y="680" data-rotate="5">
         <p class="eyebrow">The first proof</p>
         <h2>Start smaller than the ambition.</h2>
         <ul>
@@ -57,7 +57,7 @@
         <p class="claim planned">Planned: narrow proof point</p>
       </section>
 
-      <section class="step contrast" data-x="3650" data-y="1850" data-rotate="0">
+      <section id="step-5" class="step contrast" data-x="3650" data-y="1850" data-rotate="0">
         <p class="eyebrow">The distinction</p>
         <h2>Not another chat app, if this works.</h2>
         <p>
@@ -71,7 +71,7 @@
         </p>
       </section>
 
-      <section class="step" data-x="2400" data-y="2250" data-rotate="-4">
+      <section id="step-6" class="step" data-x="2400" data-y="2250" data-rotate="-4">
         <p class="eyebrow">The power shift</p>
         <h2>Architecture decides who gets practical agency.</h2>
         <div class="split">
@@ -86,7 +86,7 @@
         </div>
       </section>
 
-      <section class="step boundary-step" data-x="1050" data-y="2100" data-rotate="2">
+      <section id="step-7" class="step boundary-step" data-x="1050" data-y="2100" data-rotate="2">
         <p class="eyebrow">Boundaries</p>
         <h2>What this is not.</h2>
         <ul>
@@ -98,7 +98,7 @@
         <p class="claim boundary">Boundary: no overclaim</p>
       </section>
 
-      <section class="step" data-x="-250" data-y="1600" data-rotate="-3">
+      <section id="step-8" class="step" data-x="-250" data-y="1600" data-rotate="-3">
         <p class="eyebrow">Later direction</p>
         <h2>AI belongs behind explicit data boundaries.</h2>
         <p>
@@ -111,7 +111,7 @@
         <p class="claim later">Later: not part of the first proof</p>
       </section>
 
-      <section class="step final-step" data-x="-1450" data-y="700" data-rotate="-4">
+      <section id="step-9" class="step final-step" data-x="-1450" data-y="700" data-rotate="-4">
         <p class="eyebrow">The ask</p>
         <h2>Help find the weak point.</h2>
         <p>
@@ -148,58 +148,30 @@
     <script>
       const deck = impress();
       deck.init();
-      const mobileQuery = window.matchMedia("(max-width: 720px)");
       const mobileSteps = Array.from(document.querySelectorAll(".step:not(#overview)"));
-      let mobileStepIndex = 0;
 
-      function currentMobileStepIndex() {
-        return mobileSteps.reduce((closestIndex, step, index) => {
-          const currentDistance = Math.abs(
-            step.getBoundingClientRect().top
-          );
-          const closestStep = mobileSteps[closestIndex];
-          const closestDistance = Math.abs(
-            closestStep.getBoundingClientRect().top
-          );
+      function currentStepIndex() {
+        const activeStep = document.querySelector(".step.active:not(#overview)");
+        const hashStep = mobileSteps.find((step) => `#${step.id}` === window.location.hash);
 
-          return currentDistance < closestDistance ? index : closestIndex;
-        }, 0);
+        return mobileSteps.indexOf(activeStep || hashStep || mobileSteps[0]);
       }
 
-      function moveMobileStep(direction) {
+      function moveStep(direction) {
+        const currentIndex = Math.max(currentStepIndex(), 0);
         const nextIndex = Math.min(
-          Math.max(mobileStepIndex + direction, 0),
+          Math.max(currentIndex + direction, 0),
           mobileSteps.length - 1
         );
 
-        mobileStepIndex = nextIndex;
-        mobileSteps[nextIndex].scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+        window.location.hash = mobileSteps[nextIndex].id;
       }
-
-      window.addEventListener("scroll", () => {
-        if (mobileQuery.matches) {
-          mobileStepIndex = currentMobileStepIndex();
-        }
-      }, { passive: true });
 
       document.querySelectorAll(".deck-control").forEach((control) => {
         control.addEventListener("click", () => {
           const direction = control.dataset.direction === "previous" ? -1 : 1;
 
-          if (mobileQuery.matches) {
-            moveMobileStep(direction);
-            return;
-          }
-
-          if (control.dataset.direction === "previous") {
-            deck.prev();
-            return;
-          }
-
-          deck.next();
+          moveStep(direction);
         });
       });
     </script>
