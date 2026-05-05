@@ -132,7 +132,7 @@
 
     <aside class="navigation-cue" aria-label="Presentation navigation hint">
       <span class="desktop-cue">Use arrow keys or space to move through the story</span>
-      <span class="mobile-cue">Scroll or tap arrows to move through the story</span>
+      <span class="mobile-cue">Scroll to move through the story</span>
     </aside>
 
     <nav class="deck-controls" aria-label="Slide navigation">
@@ -146,13 +146,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/impress.js@1.1.0/js/impress.js"></script>
     <script>
-      const deck = impress();
-      deck.init();
+      const mobileQuery = window.matchMedia("(max-width: 720px)");
       const mobileSteps = Array.from(document.querySelectorAll(".step:not(#overview)"));
+      const deck = mobileQuery.matches ? null : impress();
+
+      if (deck) {
+        deck.init();
+      }
 
       function currentStepIndex() {
-        const activeStep = document.querySelector(".step.active:not(#overview)");
         const hashStep = mobileSteps.find((step) => `#${step.id}` === window.location.hash);
+
+        if (mobileQuery.matches) {
+          return 0;
+        }
+
+        const activeStep = document.querySelector(".step.active:not(#overview)");
 
         return mobileSteps.indexOf(activeStep || hashStep || mobileSteps[0]);
       }
@@ -163,12 +172,17 @@
           Math.max(currentIndex + direction, 0),
           mobileSteps.length - 1
         );
+        const targetStep = mobileSteps[nextIndex];
 
-        window.location.hash = mobileSteps[nextIndex].id;
+        deck.goto(targetStep.id);
       }
 
       document.querySelectorAll(".deck-control").forEach((control) => {
         control.addEventListener("click", () => {
+          if (!deck) {
+            return;
+          }
+
           const direction = control.dataset.direction === "previous" ? -1 : 1;
 
           moveStep(direction);
