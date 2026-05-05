@@ -261,6 +261,13 @@ li::before {
     overflow: auto;
   }
 
+  #impress,
+  #impress > div {
+    position: static !important;
+    width: 100%;
+    transform: none !important;
+  }
+  
   .step {
     width: 92vw;
     min-height: 72vh;
