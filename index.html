@@ -150,17 +150,16 @@
       deck.init();
       const mobileQuery = window.matchMedia("(max-width: 720px)");
       const mobileSteps = Array.from(document.querySelectorAll(".step:not(#overview)"));
+      let mobileStepIndex = 0;
 
       function currentMobileStepIndex() {
-        const viewportMiddle = window.scrollY + window.innerHeight / 2;
-
         return mobileSteps.reduce((closestIndex, step, index) => {
           const currentDistance = Math.abs(
-            step.offsetTop + step.offsetHeight / 2 - viewportMiddle
+            step.getBoundingClientRect().top
           );
           const closestStep = mobileSteps[closestIndex];
           const closestDistance = Math.abs(
-            closestStep.offsetTop + closestStep.offsetHeight / 2 - viewportMiddle
+            closestStep.getBoundingClientRect().top
           );
 
           return currentDistance < closestDistance ? index : closestIndex;
@@ -168,17 +167,23 @@
       }
 
       function moveMobileStep(direction) {
-        const index = currentMobileStepIndex();
         const nextIndex = Math.min(
-          Math.max(index + direction, 0),
+          Math.max(mobileStepIndex + direction, 0),
           mobileSteps.length - 1
         );
 
+        mobileStepIndex = nextIndex;
         mobileSteps[nextIndex].scrollIntoView({
           behavior: "smooth",
           block: "start"
         });
       }
+
+      window.addEventListener("scroll", () => {
+        if (mobileQuery.matches) {
+          mobileStepIndex = currentMobileStepIndex();
+        }
+      }, { passive: true });
 
       document.querySelectorAll(".deck-control").forEach((control) => {
         control.addEventListener("click", () => {
