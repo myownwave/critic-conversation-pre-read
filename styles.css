@@ -263,7 +263,6 @@ li::before {
 
   #impress,
   #impress > div {
-    position: static !important;
     width: 100%;
     transform: none !important;
   }
