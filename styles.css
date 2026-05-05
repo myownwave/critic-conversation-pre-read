@@ -256,6 +256,42 @@ li::before {
   font-weight: 700;
 }
 
+.mobile-cue {
+  display: none;
+}
+
+.deck-controls {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 21;
+  display: flex;
+  gap: 10px;
+}
+
+.deck-control {
+  display: inline-grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgba(23, 23, 23, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 252, 246, 0.9);
+  color: var(--ink);
+  box-shadow: 0 12px 30px rgba(31, 26, 18, 0.1);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.deck-control:hover,
+.deck-control:focus {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fffaf0;
+}
+
 @media (max-width: 720px) {
   body {
     overflow: auto;
@@ -263,6 +299,7 @@ li::before {
 
   #impress,
   #impress > div {
+    position: static !important;
     width: 100%;
     transform: none !important;
   }
@@ -293,7 +330,25 @@ li::before {
 
   .navigation-cue {
     right: 12px;
-    bottom: 12px;
+    bottom: 72px;
     font-size: 0.78rem;
+  }
+
+  .deck-controls {
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .deck-control {
+    width: 48px;
+    height: 48px;
+  }
+
+  .desktop-cue {
+    display: none;
+  }
+
+  .mobile-cue {
+    display: inline;
   }
 }

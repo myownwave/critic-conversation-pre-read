@@ -118,7 +118,7 @@
           What is unclear, overclaimed, too abstract, or worth proving in a
           first demo?
         </p>
-        <a class="critique-link" href="https://tally.so/r/b5N6L6">
+        <a class="critique-link" href="https://tally.so/r/YOUR_FORM_ID">
           Continue to the critic conversation
         </a>
         <p class="small-note">
@@ -131,12 +131,34 @@
     </main>
 
     <aside class="navigation-cue" aria-label="Presentation navigation hint">
-      Use arrow keys or space to move through the story
+      <span class="desktop-cue">Use arrow keys or space to move through the story</span>
+      <span class="mobile-cue">Scroll to move through the story</span>
     </aside>
+
+    <nav class="deck-controls" aria-label="Slide navigation">
+      <button class="deck-control" type="button" data-direction="previous" aria-label="Previous slide">
+        &larr;
+      </button>
+      <button class="deck-control" type="button" data-direction="next" aria-label="Next slide">
+        &rarr;
+      </button>
+    </nav>
 
     <script src="https://cdn.jsdelivr.net/npm/impress.js@1.1.0/js/impress.js"></script>
     <script>
-      impress().init();
+      const deck = impress();
+      deck.init();
+
+      document.querySelectorAll(".deck-control").forEach((control) => {
+        control.addEventListener("click", () => {
+          if (control.dataset.direction === "previous") {
+            deck.prev();
+            return;
+          }
+
+          deck.next();
+        });
+      });
     </script>
   </body>
 </html>
