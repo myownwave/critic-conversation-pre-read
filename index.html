@@ -132,7 +132,7 @@
 
     <aside class="navigation-cue" aria-label="Presentation navigation hint">
       <span class="desktop-cue">Use arrow keys or space to move through the story</span>
-      <span class="mobile-cue">Scroll to move through the story</span>
+      <span class="mobile-cue">Scroll or tap arrows to move through the story</span>
     </aside>
 
     <nav class="deck-controls" aria-label="Slide navigation">
@@ -148,9 +148,47 @@
     <script>
       const deck = impress();
       deck.init();
+      const mobileQuery = window.matchMedia("(max-width: 720px)");
+      const mobileSteps = Array.from(document.querySelectorAll(".step:not(#overview)"));
+
+      function currentMobileStepIndex() {
+        const viewportMiddle = window.scrollY + window.innerHeight / 2;
+
+        return mobileSteps.reduce((closestIndex, step, index) => {
+          const currentDistance = Math.abs(
+            step.offsetTop + step.offsetHeight / 2 - viewportMiddle
+          );
+          const closestStep = mobileSteps[closestIndex];
+          const closestDistance = Math.abs(
+            closestStep.offsetTop + closestStep.offsetHeight / 2 - viewportMiddle
+          );
+
+          return currentDistance < closestDistance ? index : closestIndex;
+        }, 0);
+      }
+
+      function moveMobileStep(direction) {
+        const index = currentMobileStepIndex();
+        const nextIndex = Math.min(
+          Math.max(index + direction, 0),
+          mobileSteps.length - 1
+        );
+
+        mobileSteps[nextIndex].scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
 
       document.querySelectorAll(".deck-control").forEach((control) => {
         control.addEventListener("click", () => {
+          const direction = control.dataset.direction === "previous" ? -1 : 1;
+
+          if (mobileQuery.matches) {
+            moveMobileStep(direction);
+            return;
+          }
+
           if (control.dataset.direction === "previous") {
             deck.prev();
             return;
